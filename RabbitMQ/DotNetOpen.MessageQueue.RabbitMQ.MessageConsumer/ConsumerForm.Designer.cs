@@ -45,6 +45,9 @@
             this.label5 = new System.Windows.Forms.Label();
             this.queueTextbox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.typeComboBox = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.SendTypeMessageLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // MessageTextBox
@@ -145,7 +148,7 @@
             // 
             // exchangeTextBox
             // 
-            this.exchangeTextBox.Location = new System.Drawing.Point(77, 80);
+            this.exchangeTextBox.Location = new System.Drawing.Point(371, 82);
             this.exchangeTextBox.Name = "exchangeTextBox";
             this.exchangeTextBox.Size = new System.Drawing.Size(182, 20);
             this.exchangeTextBox.TabIndex = 15;
@@ -153,7 +156,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(11, 83);
+            this.label4.Location = new System.Drawing.Point(305, 85);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(58, 13);
             this.label4.TabIndex = 16;
@@ -161,7 +164,7 @@
             // 
             // routingKeyTextbox
             // 
-            this.routingKeyTextbox.Location = new System.Drawing.Point(371, 80);
+            this.routingKeyTextbox.Location = new System.Drawing.Point(77, 111);
             this.routingKeyTextbox.Name = "routingKeyTextbox";
             this.routingKeyTextbox.Size = new System.Drawing.Size(182, 20);
             this.routingKeyTextbox.TabIndex = 17;
@@ -169,7 +172,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(305, 83);
+            this.label5.Location = new System.Drawing.Point(11, 114);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(68, 13);
             this.label5.TabIndex = 18;
@@ -177,7 +180,7 @@
             // 
             // queueTextbox
             // 
-            this.queueTextbox.Location = new System.Drawing.Point(77, 111);
+            this.queueTextbox.Location = new System.Drawing.Point(371, 111);
             this.queueTextbox.Name = "queueTextbox";
             this.queueTextbox.Size = new System.Drawing.Size(182, 20);
             this.queueTextbox.TabIndex = 19;
@@ -185,17 +188,46 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(11, 114);
+            this.label6.Location = new System.Drawing.Point(305, 114);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(42, 13);
             this.label6.TabIndex = 20;
             this.label6.Text = "Queue:";
             // 
+            // typeComboBox
+            // 
+            this.typeComboBox.FormattingEnabled = true;
+            this.typeComboBox.Location = new System.Drawing.Point(77, 82);
+            this.typeComboBox.Name = "typeComboBox";
+            this.typeComboBox.Size = new System.Drawing.Size(182, 21);
+            this.typeComboBox.TabIndex = 30;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(13, 85);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(34, 13);
+            this.label8.TabIndex = 29;
+            this.label8.Text = "Type:";
+            // 
+            // SendTypeMessageLabel
+            // 
+            this.SendTypeMessageLabel.AutoSize = true;
+            this.SendTypeMessageLabel.Location = new System.Drawing.Point(14, 351);
+            this.SendTypeMessageLabel.Name = "SendTypeMessageLabel";
+            this.SendTypeMessageLabel.Size = new System.Drawing.Size(23, 13);
+            this.SendTypeMessageLabel.TabIndex = 31;
+            this.SendTypeMessageLabel.Text = "****";
+            // 
             // ConsumerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(565, 347);
+            this.ClientSize = new System.Drawing.Size(565, 376);
+            this.Controls.Add(this.SendTypeMessageLabel);
+            this.Controls.Add(this.typeComboBox);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.queueTextbox);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.routingKeyTextbox);
@@ -240,6 +272,9 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox queueTextbox;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox typeComboBox;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label SendTypeMessageLabel;
     }
 }
 
