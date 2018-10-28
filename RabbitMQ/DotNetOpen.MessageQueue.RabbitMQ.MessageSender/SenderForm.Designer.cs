@@ -51,6 +51,9 @@
             this.label8 = new System.Windows.Forms.Label();
             this.typeComboBox = new System.Windows.Forms.ComboBox();
             this.SendTypeMessageLabel = new System.Windows.Forms.Label();
+            this.headersTextBox = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // MessageLabel
@@ -64,7 +67,7 @@
             // 
             // MessageTextBox
             // 
-            this.MessageTextBox.Location = new System.Drawing.Point(15, 159);
+            this.MessageTextBox.Location = new System.Drawing.Point(15, 244);
             this.MessageTextBox.Multiline = true;
             this.MessageTextBox.Name = "MessageTextBox";
             this.MessageTextBox.Size = new System.Drawing.Size(538, 53);
@@ -72,7 +75,7 @@
             // 
             // SendButton
             // 
-            this.SendButton.Location = new System.Drawing.Point(13, 221);
+            this.SendButton.Location = new System.Drawing.Point(13, 303);
             this.SendButton.Name = "SendButton";
             this.SendButton.Size = new System.Drawing.Size(75, 23);
             this.SendButton.TabIndex = 9;
@@ -142,7 +145,7 @@
             // 
             // RecursivelyButton
             // 
-            this.RecursivelyButton.Location = new System.Drawing.Point(443, 221);
+            this.RecursivelyButton.Location = new System.Drawing.Point(443, 303);
             this.RecursivelyButton.Name = "RecursivelyButton";
             this.RecursivelyButton.Size = new System.Drawing.Size(110, 23);
             this.RecursivelyButton.TabIndex = 11;
@@ -152,7 +155,7 @@
             // 
             // CountTextBox
             // 
-            this.CountTextBox.Location = new System.Drawing.Point(323, 223);
+            this.CountTextBox.Location = new System.Drawing.Point(323, 305);
             this.CountTextBox.Name = "CountTextBox";
             this.CountTextBox.Size = new System.Drawing.Size(100, 20);
             this.CountTextBox.TabIndex = 10;
@@ -161,7 +164,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(267, 226);
+            this.label4.Location = new System.Drawing.Point(267, 308);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(47, 13);
             this.label4.TabIndex = 19;
@@ -244,17 +247,46 @@
             // SendTypeMessageLabel
             // 
             this.SendTypeMessageLabel.AutoSize = true;
-            this.SendTypeMessageLabel.Location = new System.Drawing.Point(13, 256);
+            this.SendTypeMessageLabel.Location = new System.Drawing.Point(13, 338);
             this.SendTypeMessageLabel.Name = "SendTypeMessageLabel";
             this.SendTypeMessageLabel.Size = new System.Drawing.Size(23, 13);
             this.SendTypeMessageLabel.TabIndex = 29;
             this.SendTypeMessageLabel.Text = "****";
             // 
+            // headersTextBox
+            // 
+            this.headersTextBox.Location = new System.Drawing.Point(14, 172);
+            this.headersTextBox.Multiline = true;
+            this.headersTextBox.Name = "headersTextBox";
+            this.headersTextBox.Size = new System.Drawing.Size(538, 53);
+            this.headersTextBox.TabIndex = 30;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(12, 155);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(75, 13);
+            this.label9.TabIndex = 31;
+            this.label9.Text = "Headers (json)";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(12, 228);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(31, 13);
+            this.label10.TabIndex = 32;
+            this.label10.Text = "Body";
+            // 
             // SenderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(565, 278);
+            this.ClientSize = new System.Drawing.Size(565, 353);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.headersTextBox);
             this.Controls.Add(this.SendTypeMessageLabel);
             this.Controls.Add(this.typeComboBox);
             this.Controls.Add(this.label8);
@@ -311,6 +343,9 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox typeComboBox;
         private System.Windows.Forms.Label SendTypeMessageLabel;
+        private System.Windows.Forms.TextBox headersTextBox;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
     }
 }
 

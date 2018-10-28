@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using RabbitMQ = global::RabbitMQ;
 using RabbitMQ.Client;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using System.Dynamic;
 
 namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
 {
@@ -148,6 +150,11 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
             var queueName = queueTextbox.Text;
             var exchange = exchangeTextBox.Text;
             var routingKey = routingKeyTextbox.Text;
+            var headers = new Dictionary<string, object>();
+            if (!string.IsNullOrEmpty(headersTextBox.Text))
+            {
+                headers = JsonConvert.DeserializeObject<Dictionary<string,object>>(headersTextBox.Text);
+            }
 
             var factory = new ConnectionFactory() { HostName = HostTextBox.Text, UserName = UsernameTextBox.Text, Password = PasswordTextBox.Text };
 
@@ -158,25 +165,25 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
                 switch (sendType)
                 {
                     case MQSendType.HelloWorld:
-                        SendHelloWorld(connection, channel, queueName, exchange, routingKey);
+                        SendHelloWorld(connection, channel, headers, queueName, exchange, routingKey);
                         break;
                     case MQSendType.WorkQueue:
-                        SendWorkQueue(connection, channel, queueName, exchange, routingKey);
+                        SendWorkQueue(connection, channel, headers, queueName, exchange, routingKey);
                         break;
                     case MQSendType.PubSub:
-                        SendPubSub(connection, channel, queueName, exchange, routingKey);
+                        SendPubSub(connection, channel, headers, queueName, exchange, routingKey);
                         break;
                     case MQSendType.Routing:
-                        SendRouting(connection, channel, queueName, exchange, routingKey);
+                        SendRouting(connection, channel, headers, queueName, exchange, routingKey);
                         break;
                     case MQSendType.Topics:
-                        SendTopics(connection, channel, queueName, exchange, routingKey);
+                        SendTopics(connection, channel, headers, queueName, exchange, routingKey);
                         break;
                     case MQSendType.TopicsRoundRobin:
-                        SendTopics(connection, channel, queueName, exchange, routingKey, true);
+                        SendTopics(connection, channel, headers, queueName, exchange, routingKey, true);
                         break;
                     case MQSendType.RPC:
-                        SendHelloWorld(connection, channel, queueName, exchange, routingKey);
+                        SendHelloWorld(connection, channel, headers, queueName, exchange, routingKey);
                         break;
                     default:
                         break;
@@ -189,7 +196,12 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
             var queueName = queueTextbox.Text;
             var exchange = exchangeTextBox.Text;
             var routingKey = routingKeyTextbox.Text;
-            
+            var headers = new Dictionary<string, object>();
+            if (!string.IsNullOrEmpty(headersTextBox.Text))
+            {
+                headers = JsonConvert.DeserializeObject<Dictionary<string, object>>(headersTextBox.Text);
+            }
+
             var totalMS = int.Parse(CountTextBox.Text) * 60 * 1000;
             var stopWatcher = new Stopwatch();
             var factory = new ConnectionFactory() { HostName = HostTextBox.Text, UserName = UsernameTextBox.Text, Password = PasswordTextBox.Text };
@@ -201,25 +213,25 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
                 switch (sendType)
                 {
                     case MQSendType.HelloWorld:
-                        SendHelloWorld(connection, channel, queueName, exchange, routingKey, stopWatcher, totalMS);
+                        SendHelloWorld(connection, channel, headers, queueName, exchange, routingKey, stopWatcher, totalMS);
                         break;
                     case MQSendType.WorkQueue:
-                        SendWorkQueue(connection, channel, queueName, exchange, routingKey, stopWatcher, totalMS);
+                        SendWorkQueue(connection, channel, headers, queueName, exchange, routingKey, stopWatcher, totalMS);
                         break;
                     case MQSendType.PubSub:
-                        SendPubSub(connection, channel, queueName, exchange, routingKey, stopWatcher, totalMS);
+                        SendPubSub(connection, channel, headers, queueName, exchange, routingKey, stopWatcher, totalMS);
                         break;
                     case MQSendType.Routing:
-                        SendRouting(connection, channel, queueName, exchange, routingKey, stopWatcher, totalMS);
+                        SendRouting(connection, channel, headers, queueName, exchange, routingKey, stopWatcher, totalMS);
                         break;
                     case MQSendType.Topics:
-                        SendTopics(connection, channel, queueName, exchange, routingKey, stopWatcher, totalMS);
+                        SendTopics(connection, channel, headers, queueName, exchange, routingKey, stopWatcher, totalMS);
                         break;
                     case MQSendType.TopicsRoundRobin:
-                        SendTopics(connection, channel, queueName, exchange, routingKey, stopWatcher, totalMS, true);
+                        SendTopics(connection, channel, headers, queueName, exchange, routingKey, stopWatcher, totalMS, true);
                         break;
                     case MQSendType.RPC:
-                        SendHelloWorld(connection, channel, queueName, exchange, routingKey, stopWatcher, totalMS);
+                        SendHelloWorld(connection, channel, headers, queueName, exchange, routingKey, stopWatcher, totalMS);
                         break;
                     default:
                         break;
@@ -247,20 +259,25 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
         }
 
         #region Send Per Different Cases
-        protected void SendHelloWorld(IConnection connection, IModel channel, string queueName, string exchange, string routingKey)
+        protected void SendHelloWorld(IConnection connection, IModel channel, IDictionary<string,object> headers, string queueName, string exchange, string routingKey)
         {
             var body = Encoding.UTF8.GetBytes(MessageTextBox.Text);
+
             channel.QueueDeclare(queueName,
                                  durable: false,
                                  exclusive: false,
                                  autoDelete: false,
                                  arguments: null);
+
+            var basicProperties = channel.CreateBasicProperties();
+            basicProperties.Headers = headers;
+
             channel.BasicPublish(exchange: "",
                                  routingKey: queueName,
-                                 basicProperties: null,
+                                 basicProperties: basicProperties,
                                  body: body);
         }
-        protected void SendHelloWorld(IConnection connection, IModel channel, string queueName, string exchange, string routingKey, Stopwatch stopWatcher, int totalMS)
+        protected void SendHelloWorld(IConnection connection, IModel channel, IDictionary<string, object> headers, string queueName, string exchange, string routingKey, Stopwatch stopWatcher, int totalMS)
         {
             var count = 0;
             stopWatcher.Start();
@@ -274,15 +291,18 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
 
             while (stopWatcher.ElapsedMilliseconds < totalMS)
             {
+                var basicProperties = channel.CreateBasicProperties();
+                basicProperties.Headers = headers;
+
                 channel.BasicPublish(exchange: "",
                                      routingKey: queueName,
-                                     basicProperties: null,
+                                     basicProperties: basicProperties,
                                      body: body);
                 count++;
                 CountLabel.Text = $"{count}";// $"{count} - {stopWatcher.Elapsed.ToString("HH:mm:ss")}";
             }
         }
-        protected void SendWorkQueue(IConnection connection, IModel channel, string queueName, string exchange, string routingKey)
+        protected void SendWorkQueue(IConnection connection, IModel channel, IDictionary<string, object> headers, string queueName, string exchange, string routingKey)
         {
             var body = Encoding.UTF8.GetBytes(MessageTextBox.Text);
             channel.QueueDeclare(queueName,
@@ -293,10 +313,11 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
 
             var properties = channel.CreateBasicProperties();
             properties.Persistent = true;
+            properties.Headers = headers;
 
             channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: properties, body: body);
         }
-        protected void SendWorkQueue(IConnection connection, IModel channel, string queueName, string exchange, string routingKey, Stopwatch stopWatcher, int totalMS)
+        protected void SendWorkQueue(IConnection connection, IModel channel, IDictionary<string, object> headers, string queueName, string exchange, string routingKey, Stopwatch stopWatcher, int totalMS)
         {
             var count = 0;
             stopWatcher.Start();
@@ -312,23 +333,28 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
             {
                 var properties = channel.CreateBasicProperties();
                 properties.Persistent = true;
+                properties.Headers = headers;
                 channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: properties, body: body);
 
                 count++;
                 CountLabel.Text = $"{count}";// $"{count} - {stopWatcher.Elapsed.ToString("HH:mm:ss")}";
             }
         }
-        protected void SendPubSub(IConnection connection, IModel channel, string queueName, string exchange, string routingKey)
+        protected void SendPubSub(IConnection connection, IModel channel, IDictionary<string, object> headers, string queueName, string exchange, string routingKey)
         {
             var body = Encoding.UTF8.GetBytes(MessageTextBox.Text);
+
             channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Fanout);
+
+            var basicProperties = channel.CreateBasicProperties();
+            basicProperties.Headers = headers;
 
             channel.BasicPublish(exchange: exchange,
                                  routingKey: "",
-                                 basicProperties: null,
+                                 basicProperties: basicProperties,
                                  body: body);
         }
-        protected void SendPubSub(IConnection connection, IModel channel, string queueName, string exchange, string routingKey, Stopwatch stopWatcher, int totalMS)
+        protected void SendPubSub(IConnection connection, IModel channel, IDictionary<string, object> headers, string queueName, string exchange, string routingKey, Stopwatch stopWatcher, int totalMS)
         {
             var count = 0;
             stopWatcher.Start();
@@ -338,26 +364,33 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
 
             while (stopWatcher.ElapsedMilliseconds < totalMS)
             {
+                var basicProperties = channel.CreateBasicProperties();
+                basicProperties.Headers = headers;
+
                 channel.BasicPublish(exchange: exchange,
                                      routingKey: "",
-                                     basicProperties: null,
+                                     basicProperties: basicProperties,
                                      body: body);
 
                 count++;
                 CountLabel.Text = $"{count}";// $"{count} - {stopWatcher.Elapsed.ToString("HH:mm:ss")}";
             }
         }
-        protected void SendRouting(IConnection connection, IModel channel, string queueName, string exchange, string routingKey)
+        protected void SendRouting(IConnection connection, IModel channel, IDictionary<string, object> headers, string queueName, string exchange, string routingKey)
         {
             var body = Encoding.UTF8.GetBytes(MessageTextBox.Text);
+
             channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Direct);
+
+            var basicProperties = channel.CreateBasicProperties();
+            basicProperties.Headers = headers;
 
             channel.BasicPublish(exchange: exchange,
                                  routingKey: routingKey,
-                                 basicProperties: null,
+                                 basicProperties: basicProperties,
                                  body: body);
         }
-        protected void SendRouting(IConnection connection, IModel channel, string queueName, string exchange, string routingKey, Stopwatch stopWatcher, int totalMS)
+        protected void SendRouting(IConnection connection, IModel channel, IDictionary<string, object> headers, string queueName, string exchange, string routingKey, Stopwatch stopWatcher, int totalMS)
         {
             var count = 0;
             stopWatcher.Start();
@@ -367,21 +400,25 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
 
             while (stopWatcher.ElapsedMilliseconds < totalMS)
             {
+                var basicProperties = channel.CreateBasicProperties();
+                basicProperties.Headers = headers;
+
                 channel.BasicPublish(exchange: exchange,
                                      routingKey: routingKey,
-                                     basicProperties: null,
+                                     basicProperties: basicProperties,
                                      body: body);
 
                 count++;
                 CountLabel.Text = $"{count}";// $"{count} - {stopWatcher.Elapsed.ToString("HH:mm:ss")}";
             }
         }
-        protected void SendTopics(IConnection connection, IModel channel, string queueName, string exchange, string routingKey, bool roundRobin = false)
+        protected void SendTopics(IConnection connection, IModel channel, IDictionary<string, object> headers, string queueName, string exchange, string routingKey, bool roundRobin = false)
         {
             var body = Encoding.UTF8.GetBytes(MessageTextBox.Text);
             channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Topic, durable: roundRobin);
 
             var properties = channel.CreateBasicProperties();
+            properties.Headers = headers;
             if (roundRobin)
                 properties.Persistent = true;
 
@@ -390,19 +427,21 @@ namespace DotNetOpen.MessageQueue.RabbitMQ.MessageSender
                                  basicProperties: properties,
                                  body: body);
         }
-        protected void SendTopics(IConnection connection, IModel channel, string queueName, string exchange, string routingKey, Stopwatch stopWatcher, int totalMS, bool roundRobin = false)
+        protected void SendTopics(IConnection connection, IModel channel, IDictionary<string, object> headers, string queueName, string exchange, string routingKey, Stopwatch stopWatcher, int totalMS, bool roundRobin = false)
         {
             var count = 0;
             stopWatcher.Start();
 
             var body = Encoding.UTF8.GetBytes(MessageTextBox.Text);
             channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Topic, durable: roundRobin);
-            var properties = channel.CreateBasicProperties();
-            if (roundRobin)
-                properties.Persistent = true;
 
             while (stopWatcher.ElapsedMilliseconds < totalMS)
             {
+                var properties = channel.CreateBasicProperties();
+                properties.Headers = headers;
+                if (roundRobin)
+                    properties.Persistent = true;
+
                 channel.BasicPublish(exchange: exchange,
                                      routingKey: routingKey,
                                      basicProperties: properties,
